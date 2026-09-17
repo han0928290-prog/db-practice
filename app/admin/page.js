@@ -110,9 +110,9 @@ export default function AdminPage() {
 
   if (session === undefined) {
     return (
-      <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-black">
+      <div className="min-h-screen bg-page px-4 py-10">
         <main className="mx-auto flex w-full max-w-4xl flex-col gap-6">
-          <p className="text-sm text-zinc-500">載入中...</p>
+          <p className="text-sm text-muted">載入中...</p>
         </main>
       </div>
     );
@@ -120,12 +120,12 @@ export default function AdminPage() {
 
   if (session?.role !== "admin") {
     return (
-      <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-black">
+      <div className="min-h-screen bg-page px-4 py-10">
         <main className="mx-auto flex w-full max-w-4xl flex-col gap-4">
-          <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">後台管理</h1>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          <h1 className="text-2xl font-semibold tracking-tight text-ink">後台管理</h1>
+          <p className="text-sm text-ink-soft">
             沒有權限查看此頁面。{" "}
-            <Link href="/login" className="text-zinc-900 underline dark:text-zinc-50">
+            <Link href="/login" className="font-medium text-accent hover:text-accent-hover">
               登入
             </Link>{" "}
             管理員帳號後再試一次。
@@ -136,39 +136,39 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-black">
+    <div className="min-h-screen bg-page px-4 py-10">
       <main className="mx-auto flex w-full max-w-4xl flex-col gap-8">
-        <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">後台管理</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">後台管理</h1>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-danger">{error}</p>}
 
-        <section className="flex flex-col gap-3 rounded border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
-          <h2 className="font-medium text-zinc-900 dark:text-zinc-50">使用者（{users.length}）</h2>
+        <section className="flex flex-col gap-3 rounded-xl border border-line bg-card p-5 shadow-sm">
+          <h2 className="text-sm font-semibold text-ink">使用者（{users.length}）</h2>
           <ul className="flex flex-col gap-2">
             {users.map((u) => (
               <li
                 key={u._id}
-                className="flex flex-wrap items-center justify-between gap-2 rounded border border-zinc-200 p-2 text-sm dark:border-zinc-800"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line p-2 text-sm"
               >
-                <div className="text-zinc-900 dark:text-zinc-50">
+                <div className="text-ink">
                   {u.name} ({u.email})
-                  <span className="ml-2 rounded bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                  <span className="ml-2 rounded-full bg-page px-2 py-0.5 text-xs text-ink-soft">
                     {u.role}
                   </span>
                 </div>
                 {u._id === session.userId ? (
-                  <span className="text-xs text-zinc-400">（自己）</span>
+                  <span className="text-xs text-muted">（自己）</span>
                 ) : (
                   <div className="flex gap-2">
                     <button
                       onClick={() => handleRoleChange(u._id, u.role === "admin" ? "user" : "admin")}
-                      className="rounded border border-zinc-300 px-3 py-1 text-xs dark:border-zinc-700"
+                      className="rounded-lg border border-line px-3 py-1 text-xs text-ink-soft transition-colors hover:border-accent hover:text-accent"
                     >
                       {u.role === "admin" ? "降為一般使用者" : "升為管理者"}
                     </button>
                     <button
                       onClick={() => handleDeleteUser(u._id)}
-                      className="rounded border border-red-300 px-3 py-1 text-xs text-red-600 dark:border-red-800"
+                      className="rounded-lg border border-danger-line px-3 py-1 text-xs text-danger transition-colors hover:bg-danger/10"
                     >
                       刪除
                     </button>
@@ -179,30 +179,26 @@ export default function AdminPage() {
           </ul>
         </section>
 
-        <section className="flex flex-col gap-3 rounded border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
-          <h2 className="font-medium text-zinc-900 dark:text-zinc-50">
-            記帳紀錄（{transactions.length}）
-          </h2>
+        <section className="flex flex-col gap-3 rounded-xl border border-line bg-card p-5 shadow-sm">
+          <h2 className="text-sm font-semibold text-ink">記帳紀錄（{transactions.length}）</h2>
           <ul className="flex flex-col gap-2">
             {transactions.map((tx) => (
               <li
                 key={tx._id}
-                className="flex flex-wrap items-center justify-between gap-2 rounded border border-zinc-200 p-2 text-sm dark:border-zinc-800"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line p-2 text-sm"
               >
-                <div className="text-zinc-900 dark:text-zinc-50">
-                  <span className="text-zinc-500">
-                    {tx.user?.name ?? "（已刪除使用者）"} ·
-                  </span>{" "}
-                  <span className={tx.type === "income" ? "text-green-600" : "text-red-600"}>
+                <div className="text-ink">
+                  <span className="text-muted">{tx.user?.name ?? "（已刪除使用者）"} ·</span>{" "}
+                  <span className={tx.type === "income" ? "text-success" : "text-danger"}>
                     {tx.type === "income" ? "收入" : "支出"}
                   </span>{" "}
                   ${tx.amount} · {tx.category}
-                  {tx.note && <span className="text-zinc-500"> · {tx.note}</span>}
-                  <span className="ml-2 text-xs text-zinc-400">{tx.date?.slice(0, 10)}</span>
+                  {tx.note && <span className="text-muted"> · {tx.note}</span>}
+                  <span className="ml-2 text-xs text-muted">{tx.date?.slice(0, 10)}</span>
                 </div>
                 <button
                   onClick={() => handleDeleteTransaction(tx._id)}
-                  className="rounded border border-red-300 px-3 py-1 text-xs text-red-600 dark:border-red-800"
+                  className="rounded-lg border border-danger-line px-3 py-1 text-xs text-danger transition-colors hover:bg-danger/10"
                 >
                   刪除
                 </button>
@@ -211,28 +207,26 @@ export default function AdminPage() {
           </ul>
         </section>
 
-        <section className="flex flex-col gap-3 rounded border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
-          <h2 className="font-medium text-zinc-900 dark:text-zinc-50">留言板文章（{posts.length}）</h2>
+        <section className="flex flex-col gap-3 rounded-xl border border-line bg-card p-5 shadow-sm">
+          <h2 className="text-sm font-semibold text-ink">留言板文章（{posts.length}）</h2>
           <ul className="flex flex-col gap-2">
             {posts.map((post) => (
               <li
                 key={post._id}
-                className="flex flex-wrap items-start justify-between gap-2 rounded border border-zinc-200 p-2 text-sm dark:border-zinc-800"
+                className="flex flex-wrap items-start justify-between gap-2 rounded-lg border border-line p-2 text-sm"
               >
                 <div>
-                  <p className="font-medium text-zinc-900 dark:text-zinc-50">
+                  <p className="font-medium text-ink">
                     {post.user?.name ?? "匿名"}
-                    <span className="ml-2 text-xs font-normal text-zinc-400">
+                    <span className="ml-2 text-xs font-normal text-muted">
                       {post.createdAt?.slice(0, 10)}
                     </span>
                   </p>
-                  <p className="mt-1 whitespace-pre-wrap text-zinc-700 dark:text-zinc-300">
-                    {post.content}
-                  </p>
+                  <p className="mt-1 whitespace-pre-wrap text-ink-soft">{post.content}</p>
                 </div>
                 <button
                   onClick={() => handleDeletePost(post._id)}
-                  className="shrink-0 rounded border border-red-300 px-3 py-1 text-xs text-red-600 dark:border-red-800"
+                  className="shrink-0 rounded-lg border border-danger-line px-3 py-1 text-xs text-danger transition-colors hover:bg-danger/10"
                 >
                   刪除
                 </button>

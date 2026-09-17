@@ -82,24 +82,24 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-black">
+    <div className="min-h-screen bg-page px-4 py-10">
       <main className="mx-auto flex w-full max-w-md flex-col gap-6">
-        <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">會員中心</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">會員中心</h1>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-danger">{error}</p>}
 
-        {session === undefined && <p className="text-sm text-zinc-500">載入中...</p>}
+        {session === undefined && <p className="text-sm text-muted">載入中...</p>}
 
         {session === null && (
-          <section className="flex flex-col gap-4 rounded border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+          <section className="flex flex-col gap-4 rounded-xl border border-line bg-card p-5 shadow-sm">
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setMode("login")}
-                className={`rounded px-3 py-1 text-sm ${
+                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                   mode === "login"
-                    ? "bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-900"
-                    : "border border-zinc-300 text-zinc-700 dark:border-zinc-700 dark:text-zinc-300"
+                    ? "bg-accent text-on-accent"
+                    : "border border-line text-ink-soft hover:border-accent hover:text-accent"
                 }`}
               >
                 登入
@@ -107,10 +107,10 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setMode("register")}
-                className={`rounded px-3 py-1 text-sm ${
+                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                   mode === "register"
-                    ? "bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-900"
-                    : "border border-zinc-300 text-zinc-700 dark:border-zinc-700 dark:text-zinc-300"
+                    ? "bg-accent text-on-accent"
+                    : "border border-line text-ink-soft hover:border-accent hover:text-accent"
                 }`}
               >
                 註冊
@@ -123,7 +123,7 @@ export default function LoginPage() {
                   type="email"
                   placeholder="email"
                   required
-                  className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+                  className="rounded-lg border border-line bg-page px-3 py-2 text-sm text-ink outline-none transition-colors focus:border-accent"
                   value={loginForm.email}
                   onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
                 />
@@ -131,13 +131,13 @@ export default function LoginPage() {
                   type="password"
                   placeholder="密碼"
                   required
-                  className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+                  className="rounded-lg border border-line bg-page px-3 py-2 text-sm text-ink outline-none transition-colors focus:border-accent"
                   value={loginForm.password}
                   onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                 />
                 <button
                   type="submit"
-                  className="rounded bg-zinc-900 px-4 py-2 text-white dark:bg-zinc-50 dark:text-zinc-900"
+                  className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-on-accent transition-colors hover:bg-accent-hover"
                 >
                   登入
                 </button>
@@ -148,7 +148,7 @@ export default function LoginPage() {
                   type="text"
                   placeholder="姓名"
                   required
-                  className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+                  className="rounded-lg border border-line bg-page px-3 py-2 text-sm text-ink outline-none transition-colors focus:border-accent"
                   value={registerForm.name}
                   onChange={(e) => setRegisterForm({ ...registerForm, name: e.target.value })}
                 />
@@ -156,7 +156,7 @@ export default function LoginPage() {
                   type="email"
                   placeholder="email"
                   required
-                  className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+                  className="rounded-lg border border-line bg-page px-3 py-2 text-sm text-ink outline-none transition-colors focus:border-accent"
                   value={registerForm.email}
                   onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
                 />
@@ -164,13 +164,13 @@ export default function LoginPage() {
                   type="password"
                   placeholder="密碼（至少 6 碼）"
                   required
-                  className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+                  className="rounded-lg border border-line bg-page px-3 py-2 text-sm text-ink outline-none transition-colors focus:border-accent"
                   value={registerForm.password}
                   onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
                 />
                 <button
                   type="submit"
-                  className="rounded bg-zinc-900 px-4 py-2 text-white dark:bg-zinc-50 dark:text-zinc-900"
+                  className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-on-accent transition-colors hover:bg-accent-hover"
                 >
                   註冊
                 </button>
@@ -180,15 +180,14 @@ export default function LoginPage() {
         )}
 
         {session && (
-          <section className="flex flex-col gap-4 rounded border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
-            <p className="text-sm text-zinc-700 dark:text-zinc-300">
-              目前登入：<span className="font-medium text-zinc-900 dark:text-zinc-50">{session.name}</span>（
-              {session.email}）
+          <section className="flex flex-col gap-4 rounded-xl border border-line bg-card p-5 shadow-sm">
+            <p className="text-sm text-ink-soft">
+              目前登入：<span className="font-medium text-ink">{session.name}</span>（{session.email}）
             </p>
             <button
               type="button"
               onClick={handleLogout}
-              className="self-start rounded border border-red-300 px-4 py-2 text-sm text-red-600 dark:border-red-800"
+              className="self-start rounded-lg border border-danger-line px-4 py-2 text-sm text-danger transition-colors hover:bg-danger/10"
             >
               登出
             </button>

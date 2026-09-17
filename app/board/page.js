@@ -70,21 +70,23 @@ export default function Board() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-black">
-      <main className="mx-auto flex w-full max-w-2xl flex-col gap-6">
-        <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">留言板</h1>
+    <div className="min-h-screen bg-page px-4 py-10">
+      <main className="mx-auto flex w-full max-w-2xl flex-col gap-8">
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">留言板</h1>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-danger">{error}</p>}
 
-        <section className="flex flex-col gap-3 rounded border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
-          <h2 className="font-medium text-zinc-900 dark:text-zinc-50">發表文章</h2>
-          <p className="text-sm text-zinc-500">
+        <section className="flex flex-col gap-3 rounded-xl border border-line bg-card p-5 shadow-sm">
+          <h2 className="text-sm font-semibold text-ink">發表文章</h2>
+          <p className="text-sm text-muted">
             {session ? (
-              <>以 <span className="font-medium text-zinc-700 dark:text-zinc-300">{session.name}</span> 的身份發文</>
+              <>
+                以 <span className="font-medium text-ink-soft">{session.name}</span> 的身份發文
+              </>
             ) : (
               <>
                 將以匿名身份發文，{" "}
-                <Link href="/login" className="text-zinc-900 underline dark:text-zinc-50">
+                <Link href="/login" className="font-medium text-accent hover:text-accent-hover">
                   登入
                 </Link>{" "}
                 後可用帳號發文
@@ -96,45 +98,40 @@ export default function Board() {
               placeholder="寫點什麼..."
               required
               rows={3}
-              className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+              className="rounded-lg border border-line bg-page px-3 py-2 text-sm text-ink outline-none transition-colors focus:border-accent"
               value={content}
               onChange={(e) => setContent(e.target.value)}
             />
             <button
               type="submit"
-              className="self-start rounded bg-zinc-900 px-4 py-2 text-white disabled:opacity-50 dark:bg-zinc-50 dark:text-zinc-900"
+              className="self-start rounded-lg bg-accent px-4 py-2 text-sm font-medium text-on-accent transition-colors hover:bg-accent-hover"
             >
               發表
             </button>
           </form>
         </section>
 
-        <section className="flex flex-col gap-2">
-          <h2 className="font-medium text-zinc-900 dark:text-zinc-50">所有文章</h2>
-          {loading && <p className="text-sm text-zinc-500">載入中...</p>}
-          {!loading && posts.length === 0 && <p className="text-sm text-zinc-500">目前沒有文章</p>}
+        <section className="flex flex-col gap-3">
+          <h2 className="text-sm font-semibold text-ink">所有文章</h2>
+          {loading && <p className="text-sm text-muted">載入中...</p>}
+          {!loading && posts.length === 0 && <p className="text-sm text-muted">目前沒有文章</p>}
           <ul className="flex flex-col gap-2">
             {posts.map((post) => (
-              <li
-                key={post._id}
-                className="rounded border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900"
-              >
+              <li key={post._id} className="rounded-xl border border-line bg-card p-3 shadow-sm">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
+                    <p className="text-sm font-medium text-ink">
                       {post.user?.name ?? "匿名"}
-                      <span className="ml-2 text-xs font-normal text-zinc-400">
+                      <span className="ml-2 text-xs font-normal text-muted">
                         {post.createdAt?.slice(0, 10)}
                       </span>
                     </p>
-                    <p className="mt-1 whitespace-pre-wrap text-sm text-zinc-700 dark:text-zinc-300">
-                      {post.content}
-                    </p>
+                    <p className="mt-1 whitespace-pre-wrap text-sm text-ink-soft">{post.content}</p>
                   </div>
                   {(!post.user || post.user._id === session?.userId) && (
                     <button
                       onClick={() => handleDelete(post._id)}
-                      className="shrink-0 rounded border border-red-300 px-3 py-1 text-sm text-red-600 dark:border-red-800"
+                      className="shrink-0 rounded-lg border border-danger-line px-3 py-1 text-sm text-danger transition-colors hover:bg-danger/10"
                     >
                       刪除
                     </button>

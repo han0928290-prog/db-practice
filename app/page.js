@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const CATEGORIES = {
   expense: ["餐飲", "交通", "購物", "娛樂", "醫療", "教育", "居家", "其他"],
@@ -9,6 +9,15 @@ const CATEGORIES = {
 };
 
 const emptyForm = { type: "expense", amount: "", category: CATEGORIES.expense[0], note: "", date: "" };
+
+const fieldClass =
+  "rounded-lg border border-line bg-page px-3 py-2 text-sm text-ink outline-none transition-colors focus:border-accent";
+const primaryButtonClass =
+  "rounded-lg bg-accent px-4 py-2 text-sm font-medium text-on-accent transition-colors hover:bg-accent-hover";
+const ghostButtonClass =
+  "rounded-lg border border-line px-3 py-1.5 text-sm text-ink-soft transition-colors hover:border-accent hover:text-accent";
+const dangerButtonClass =
+  "rounded-lg border border-danger-line px-3 py-1.5 text-sm text-danger transition-colors hover:bg-danger/10";
 
 export default function Home() {
   const [session, setSession] = useState(undefined); // undefined = loading, null = logged out
@@ -57,6 +66,16 @@ export default function Home() {
       setLoading(false);
     }
   }
+
+  const summary = useMemo(() => {
+    const income = transactions
+      .filter((tx) => tx.type === "income")
+      .reduce((sum, tx) => sum + tx.amount, 0);
+    const expense = transactions
+      .filter((tx) => tx.type === "expense")
+      .reduce((sum, tx) => sum + tx.amount, 0);
+    return { income, expense, balance: income - expense };
+  }, [transactions]);
 
   async function handleCreate(e) {
     e.preventDefault();
@@ -141,9 +160,9 @@ export default function Home() {
 
   if (session === undefined) {
     return (
-      <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-black">
+      <div className="min-h-screen bg-page px-4 py-10">
         <main className="mx-auto flex w-full max-w-2xl flex-col gap-6">
-          <p className="text-sm text-zinc-500">載入中...</p>
+          <p className="text-sm text-muted">載入中...</p>
         </main>
       </div>
     );
@@ -151,12 +170,12 @@ export default function Home() {
 
   if (session === null) {
     return (
-      <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-black">
+      <div className="min-h-screen bg-page px-4 py-10">
         <main className="mx-auto flex w-full max-w-2xl flex-col gap-4">
-          <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">記帳紀錄管理</h1>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          <h1 className="text-2xl font-semibold tracking-tight text-ink">記帳紀錄管理</h1>
+          <p className="text-sm text-ink-soft">
             請先{" "}
-            <Link href="/login" className="text-zinc-900 underline dark:text-zinc-50">
+            <Link href="/login" className="font-medium text-accent hover:text-accent-hover">
               登入
             </Link>{" "}
             才能查看與新增記帳紀錄。
@@ -167,18 +186,37 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 px-4 py-10 dark:bg-black">
-      <main className="mx-auto flex w-full max-w-2xl flex-col gap-6">
-        <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">記帳紀錄管理</h1>
-        <p className="text-sm text-zinc-500">目前登入：{session.name}（{session.email}）</p>
+    <div className="min-h-screen bg-page px-4 py-10">
+      <main className="mx-auto flex w-full max-w-2xl flex-col gap-8">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-semibold tracking-tight text-ink">記帳紀錄管理</h1>
+          <p className="text-sm text-muted">
+            目前登入：{session.name}（{session.email}）
+          </p>
+        </div>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="text-sm text-danger">{error}</p>}
 
-        <section className="flex flex-col gap-3 rounded border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
-          <h2 className="font-medium text-zinc-900 dark:text-zinc-50">新增記帳紀錄</h2>
+        <section className="grid grid-cols-3 gap-3">
+          <div className="rounded-xl border border-line bg-card p-4 shadow-sm">
+            <p className="text-xs text-muted">收入</p>
+            <p className="mt-1 text-lg font-semibold text-success">${summary.income}</p>
+          </div>
+          <div className="rounded-xl border border-line bg-card p-4 shadow-sm">
+            <p className="text-xs text-muted">支出</p>
+            <p className="mt-1 text-lg font-semibold text-danger">${summary.expense}</p>
+          </div>
+          <div className="rounded-xl border border-line bg-card p-4 shadow-sm">
+            <p className="text-xs text-muted">結餘</p>
+            <p className="mt-1 text-lg font-semibold text-ink">${summary.balance}</p>
+          </div>
+        </section>
+
+        <section className="flex flex-col gap-3 rounded-xl border border-line bg-card p-5 shadow-sm">
+          <h2 className="text-sm font-semibold text-ink">新增記帳紀錄</h2>
           <form onSubmit={handleCreate} className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <select
-              className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+              className={fieldClass}
               value={form.type}
               onChange={(e) => setForm({ ...form, type: e.target.value, category: CATEGORIES[e.target.value][0] })}
             >
@@ -190,12 +228,12 @@ export default function Home() {
               placeholder="金額"
               required
               min="0"
-              className="w-32 rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+              className={`w-32 ${fieldClass}`}
               value={form.amount}
               onChange={(e) => setForm({ ...form, amount: e.target.value })}
             />
             <select
-              className="w-32 rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+              className={`w-32 ${fieldClass}`}
               value={form.category}
               onChange={(e) => setForm({ ...form, category: e.target.value })}
             >
@@ -208,41 +246,38 @@ export default function Home() {
             <input
               type="text"
               placeholder="備註（選填）"
-              className="w-40 rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+              className={`w-40 ${fieldClass}`}
               value={form.note}
               onChange={(e) => setForm({ ...form, note: e.target.value })}
             />
             <input
               type="date"
-              className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+              className={fieldClass}
               value={form.date}
               onChange={(e) => setForm({ ...form, date: e.target.value })}
             />
-            <button
-              type="submit"
-              className="rounded bg-zinc-900 px-4 py-2 text-white dark:bg-zinc-50 dark:text-zinc-900"
-            >
+            <button type="submit" className={primaryButtonClass}>
               新增
             </button>
           </form>
         </section>
 
-        <section className="flex flex-col gap-2">
-          <h2 className="font-medium text-zinc-900 dark:text-zinc-50">記帳紀錄列表</h2>
-          {loading && <p className="text-sm text-zinc-500">載入中...</p>}
+        <section className="flex flex-col gap-3">
+          <h2 className="text-sm font-semibold text-ink">記帳紀錄列表</h2>
+          {loading && <p className="text-sm text-muted">載入中...</p>}
           {!loading && transactions.length === 0 && (
-            <p className="text-sm text-zinc-500">目前沒有記帳紀錄</p>
+            <p className="text-sm text-muted">目前沒有記帳紀錄</p>
           )}
           <ul className="flex flex-col gap-2">
             {transactions.map((tx) => (
               <li
                 key={tx._id}
-                className="rounded border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900"
+                className="rounded-xl border border-line bg-card p-3 shadow-sm"
               >
                 {editingId === tx._id ? (
                   <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                     <select
-                      className="rounded border border-zinc-300 px-2 py-1 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+                      className={fieldClass}
                       value={editForm.type}
                       onChange={(e) =>
                         setEditForm({ ...editForm, type: e.target.value, category: CATEGORIES[e.target.value][0] })
@@ -254,12 +289,12 @@ export default function Home() {
                     <input
                       type="number"
                       min="0"
-                      className="w-28 rounded border border-zinc-300 px-2 py-1 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+                      className={`w-28 ${fieldClass}`}
                       value={editForm.amount}
                       onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })}
                     />
                     <select
-                      className="w-28 rounded border border-zinc-300 px-2 py-1 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+                      className={`w-28 ${fieldClass}`}
                       value={editForm.category}
                       onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
                     >
@@ -271,54 +306,40 @@ export default function Home() {
                     </select>
                     <input
                       type="text"
-                      className="w-32 rounded border border-zinc-300 px-2 py-1 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+                      className={`w-32 ${fieldClass}`}
                       value={editForm.note}
                       onChange={(e) => setEditForm({ ...editForm, note: e.target.value })}
                     />
                     <input
                       type="date"
-                      className="rounded border border-zinc-300 px-2 py-1 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
+                      className={fieldClass}
                       value={editForm.date}
                       onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
                     />
                     <div className="flex gap-2">
-                      <button
-                        onClick={() => handleUpdate(tx._id)}
-                        className="rounded bg-zinc-900 px-3 py-1 text-sm text-white dark:bg-zinc-50 dark:text-zinc-900"
-                      >
+                      <button onClick={() => handleUpdate(tx._id)} className={primaryButtonClass}>
                         儲存
                       </button>
-                      <button
-                        onClick={cancelEdit}
-                        className="rounded border border-zinc-300 px-3 py-1 text-sm dark:border-zinc-700"
-                      >
+                      <button onClick={cancelEdit} className={ghostButtonClass}>
                         取消
                       </button>
                     </div>
                   </div>
                 ) : (
                   <div className="flex items-center justify-between gap-2">
-                    <div className="text-sm text-zinc-900 dark:text-zinc-50">
-                      <span className={tx.type === "income" ? "text-green-600" : "text-red-600"}>
+                    <div className="text-sm text-ink">
+                      <span className={tx.type === "income" ? "text-success" : "text-danger"}>
                         {tx.type === "income" ? "收入" : "支出"}
                       </span>{" "}
                       ${tx.amount} · {tx.category}
-                      {tx.note && <span className="text-zinc-500"> · {tx.note}</span>}
-                      <span className="ml-2 text-xs text-zinc-400">
-                        {tx.date?.slice(0, 10)}
-                      </span>
+                      {tx.note && <span className="text-muted"> · {tx.note}</span>}
+                      <span className="ml-2 text-xs text-muted">{tx.date?.slice(0, 10)}</span>
                     </div>
                     <div className="flex shrink-0 gap-2">
-                      <button
-                        onClick={() => startEdit(tx)}
-                        className="rounded border border-zinc-300 px-3 py-1 text-sm dark:border-zinc-700"
-                      >
+                      <button onClick={() => startEdit(tx)} className={ghostButtonClass}>
                         編輯
                       </button>
-                      <button
-                        onClick={() => handleDelete(tx._id)}
-                        className="rounded border border-red-300 px-3 py-1 text-sm text-red-600 dark:border-red-800"
-                      >
+                      <button onClick={() => handleDelete(tx._id)} className={dangerButtonClass}>
                         刪除
                       </button>
                     </div>
