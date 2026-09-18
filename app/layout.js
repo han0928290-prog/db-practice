@@ -41,6 +41,9 @@ export default async function RootLayout({ children }) {
             <Link href="/board" className={navLinkClass}>
               留言板
             </Link>
+            <Link href="/upload" className={navLinkClass}>
+              上傳圖片
+            </Link>
             <Link href="/login" className={navLinkClass}>
               會員中心
             </Link>
