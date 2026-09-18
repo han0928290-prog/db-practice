@@ -36,7 +36,7 @@ export default async function RootLayout({ children }) {
           </span>
           <div className="flex flex-1 gap-5">
             <Link href="/" className={navLinkClass}>
-              記帳紀錄
+              記帳專案
             </Link>
             <Link href="/board" className={navLinkClass}>
               留言板

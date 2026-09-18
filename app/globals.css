@@ -13,6 +13,16 @@
   --danger: #b5543c;
   --danger-line: #ddb9a4;
   --success: #74845e;
+
+  /* categorical chart series - fixed order, validated for CVD + contrast */
+  --chart-1: #cc5233;
+  --chart-2: #0d9488;
+  --chart-3: #d99a1e;
+  --chart-4: #8347a0;
+  --chart-5: #8a9a2e;
+  --chart-6: #c15380;
+  --chart-7: #3e62ae;
+  --chart-8: #9c5a1e;
 }
 
 @theme inline {
@@ -28,6 +38,14 @@
   --color-danger: var(--danger);
   --color-danger-line: var(--danger-line);
   --color-success: var(--success);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-chart-7: var(--chart-7);
+  --color-chart-8: var(--chart-8);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -46,6 +64,15 @@
     --danger: #e0917a;
     --danger-line: #5a3a2c;
     --success: #9db37e;
+
+    --chart-1: #d5673f;
+    --chart-2: #23a192;
+    --chart-3: #a87d1a;
+    --chart-4: #9760b5;
+    --chart-5: #85952e;
+    --chart-6: #cc6690;
+    --chart-7: #5a78c2;
+    --chart-8: #b56f2e;
   }
 }
 

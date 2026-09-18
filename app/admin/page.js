@@ -188,7 +188,9 @@ export default function AdminPage() {
                 className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line p-2 text-sm"
               >
                 <div className="text-ink">
-                  <span className="text-muted">{tx.user?.name ?? "（已刪除使用者）"} ·</span>{" "}
+                  <span className="text-muted">
+                    {tx.user?.name ?? "（已刪除使用者）"} · {tx.project?.name ?? "（已刪除專案）"} ·
+                  </span>{" "}
                   <span className={tx.type === "income" ? "text-success" : "text-danger"}>
                     {tx.type === "income" ? "收入" : "支出"}
                   </span>{" "}

@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import dbConnect from "@/lib/mongoose";
 import User from "@/models/User";
 import Transaction from "@/models/Transaction";
+import Project from "@/models/Project";
 import { requireAdmin } from "@/lib/adminAuth";
 
 export async function PATCH(req: NextRequest, ctx: RouteContext<"/api/admin/users/[id]">) {
@@ -62,6 +63,7 @@ export async function DELETE(_req: NextRequest, ctx: RouteContext<"/api/admin/us
       return Response.json({ error: "User not found" }, { status: 404 });
     }
     await Transaction.deleteMany({ user: id });
+    await Project.deleteMany({ user: id });
     return Response.json({ ok: true });
   } catch (error) {
     return Response.json(
