@@ -13,6 +13,7 @@ export default function LoginPage() {
   const [registerForm, setRegisterForm] = useState(emptyRegisterForm);
   const [loginForm, setLoginForm] = useState(emptyLoginForm);
   const [error, setError] = useState("");
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   useEffect(() => {
     loadSession();
@@ -67,6 +68,26 @@ export default function LoginPage() {
       router.refresh();
     } catch (err) {
       setError(err.message);
+    }
+  }
+
+  async function handleAvatarChange(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError("");
+    setUploadingAvatar(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/auth/avatar", { method: "POST", body: formData });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "上傳大頭照失敗");
+      setSession((prev) => ({ ...prev, avatarUrl: data.avatarUrl }));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploadingAvatar(false);
+      e.target.value = "";
     }
   }
 
@@ -181,9 +202,35 @@ export default function LoginPage() {
 
         {session && (
           <section className="flex flex-col gap-4 rounded-xl border border-line bg-card p-5 shadow-sm">
-            <p className="text-sm text-ink-soft">
-              目前登入：<span className="font-medium text-ink">{session.name}</span>（{session.email}）
-            </p>
+            <div className="flex items-center gap-4">
+              {session.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={session.avatarUrl}
+                  alt={session.name}
+                  className="h-16 w-16 shrink-0 rounded-full border border-line object-cover"
+                />
+              ) : (
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-line bg-page text-lg font-semibold text-muted">
+                  {session.name?.[0]?.toUpperCase() ?? "?"}
+                </div>
+              )}
+              <div className="flex flex-col gap-2">
+                <p className="text-sm text-ink-soft">
+                  <span className="font-medium text-ink">{session.name}</span>（{session.email}）
+                </p>
+                <label className="w-fit cursor-pointer text-sm font-medium text-accent hover:text-accent-hover">
+                  {uploadingAvatar ? "上傳中..." : "更換大頭照"}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarChange}
+                    disabled={uploadingAvatar}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
             <button
               type="button"
               onClick={handleLogout}

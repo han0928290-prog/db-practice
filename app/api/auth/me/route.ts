@@ -1,3 +1,5 @@
+import dbConnect from "@/lib/mongoose";
+import User from "@/models/User";
 import { getSession } from "@/lib/session";
 
 export async function GET() {
@@ -5,5 +7,12 @@ export async function GET() {
   if (!session) {
     return Response.json({ user: null }, { status: 401 });
   }
-  return Response.json({ user: session });
+
+  try {
+    await dbConnect();
+    const user = await User.findById(session.userId).select("avatarUrl");
+    return Response.json({ user: { ...session, avatarUrl: user?.avatarUrl ?? null } });
+  } catch {
+    return Response.json({ user: session });
+  }
 }
